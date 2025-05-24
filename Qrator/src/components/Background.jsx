@@ -5,7 +5,7 @@ import Navbar from "./Navbar";
 
 function Background({ children, showFooter = true, showNavbar = true }) {
   return (
-    <div className="min-h-screen h-screen bg-slate-800 relative overflow-hidden flex flex-col">
+    <div className="min-h-screen h-screen bg-slate-800 relative overflow-auto flex flex-col">
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="w-[800px] h-[600px] absolute -top-32 right-0 bg-slate-500/20 rounded-full blur-[120px]" />
         <div className="w-[500px] h-[400px] absolute -bottom-32 left-48 bg-blue-400/15 rounded-full blur-[100px]" />
