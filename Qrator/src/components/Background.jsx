@@ -31,7 +31,6 @@ function Background({children,showFooter = true,showNavbar =true}){
         </main>
         {showFooter && <Footer/>}
       </div>
-      {showFooter && <Footer/>}
     </div>
   );
 }
