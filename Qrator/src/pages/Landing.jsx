@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Background from "./Background";
+import Background from "../components/Background";
 
 function Landing() {
   const navigate = useNavigate();
   return (
-    <Background>
+    <Background showFooter={false} showNavbar={false}>
       <div className="text-center space-y-8 max-w-4xl">
         <h1 className="text-white font-bold leading-tight">
           <div className="text-7xl lg:text-8xl mb-4">
