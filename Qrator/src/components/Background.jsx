@@ -3,33 +3,36 @@ import logo from "../assets/full-logo.png";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 
-function Background({ children, showFooter = true, showNavbar = true }) {
-  return (
-    <div className="min-h-screen h-screen bg-slate-800 relative overflow-auto flex flex-col">
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="w-[800px] h-[600px] absolute -top-32 right-0 bg-slate-500/20 rounded-full blur-[120px]" />
-        <div className="w-[500px] h-[400px] absolute -bottom-32 left-48 bg-blue-400/15 rounded-full blur-[100px]" />
-        <div className="w-[700px] h-[500px] absolute top-1/3 left-1/4 bg-indigo-800/30 rounded-full blur-[130px]" />
-        <div className="absolute inset-0 opacity-20 bg-gradient-to-br from-transparent via-slate-700/10 to-slate-900/20" />
+function Background({children,showFooter = true,showNavbar =true}){
+  return(
+    <div className="min-h-screen relative overflow-auto flex flex-col" style={{ minHeight: '100vh' }}>
+      <div className="fixed inset-0 w-full h-full">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-gray-900" />
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/90 via-blue-950/40 to-slate-900/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-blue-950/30 to-transparent" />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="w-[100vw] h-[60vh] absolute -top-20 left-0 bg-slate-700/20 blur-[120px]" />
+          <div className="w-[100vw] h-[50vh] absolute -bottom-20 left-0 bg-gray-900/40 blur-[150px]" />
+          <div className="w-[100vw] h-[40vh] absolute top-1/2 transform -translate-y-1/2 left-0 bg-blue-950/15 blur-[100px]" />
+        </div>
       </div>
+      <div className="relative z-10 min-h-screen flex flex-col">
+        <>
+          <div className="absolute top-9 left-12 z-20 flex items-center">
+            <img src={logo} alt="Qrator Logo" className="h-12 w-auto" />
+          </div>
 
-      <>
-        <div className="absolute top-9 left-12 z-20 flex items-center">
-          <img src={logo} alt="Qrator Logo" className="h-12 w-auto" />
-        </div>
-
-        <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-20 flex items-center">
-          {showNavbar && <Navbar />}
-        </div>
-      </>
-
-      <main className="flex-grow flex items-center justify-center px-8 z-10">
-        {children}
-      </main>
-
-      {showFooter && <Footer />}
+          <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-20 flex items-center">
+            {showNavbar && <Navbar/>}
+          </div>
+        </>
+        <main className="flex-grow flex items-center justify-center px-8 z-10 relative">
+          {children}
+        </main>
+        {showFooter && <Footer/>}
+      </div>
+      {showFooter && <Footer/>}
     </div>
   );
 }
-
 export default Background;
