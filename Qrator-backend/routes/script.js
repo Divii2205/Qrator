@@ -1,10 +1,11 @@
 import express from 'express';
 import {geminiScript} from '../services/Gemini.js';
-import supabase from '../utils/supabaseClient.js';
+import supabase from '../utils/supabaseClient.js'; 
 const router = express.Router();
 
 router.post('/text',async (req, res)=>{
   const {userId,ideaText,tone} =req.body;
+  console.log(req.body)
   if(!userId || !ideaText){
     return res.status(400).json({error:'userId and ideaText are required'});
   }

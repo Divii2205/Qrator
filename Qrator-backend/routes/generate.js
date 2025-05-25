@@ -5,6 +5,9 @@ const router= express.Router();
 
 router.post('/idea',async(req,res)=> {
   const {userId,niche} = req.body;
+  // console.log(req.body)
+  const {goal , tone , targetAudience , contentType} = req.body
+  // console.log(goal , tone)
 
   if(!userId || !niche) {
     return res.status(400).json({ error: 'userId and niche are required'});

@@ -91,6 +91,18 @@ function Idea() {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
+      // console.log(formData)
+
+      const dataRes = await fetch('http://localhost:4000/generate/idea' , {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData),
+      }) 
+
+      console.log(dataRes)
+
       setIsLoading(true);
       setError(null);
 

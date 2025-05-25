@@ -104,6 +104,18 @@ function Script() {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
+
+      const dataRes = await fetch('http://localhost:4000/script/text' , {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData),
+      }) 
+
+      console.log(dataRes)
+
+
       setIsLoading(true);
       setError(null);
 
@@ -230,7 +242,7 @@ function Script() {
                     htmlFor="topic"
                     className="block text-white text-lg mb-2"
                   >
-                    Main Topic
+                    Main Topic 
                   </label>
                   <input
                     type="text"
