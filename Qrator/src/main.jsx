@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import App from "./App.jsx";
 import Landing from "./pages/Landing.jsx";
-import Home from "./pages/home.jsx";
+import Home from "./pages/Home.jsx";
 import Idea from "./pages/Idea.jsx";
 import Script from "./pages/Script.jsx";
 import SEO from "./pages/SEO.jsx";
