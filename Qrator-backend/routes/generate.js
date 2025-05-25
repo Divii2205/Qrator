@@ -4,22 +4,23 @@ import supabase from '../utils/supabaseClient.js';
 const router= express.Router();
 
 router.post('/idea',async(req,res)=> {
-  const {userId,niche} = req.body;
+  // const {userId,niche} = req.body;
   // console.log(req.body)
   const {goal , tone , targetAudience , contentType} = req.body
   // console.log(goal , tone)
 
-  if(!userId || !niche) {
-    return res.status(400).json({ error: 'userId and niche are required'});
+  if (!goal || !tone || !targetAudience || !contentType) {
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
+  const prompt = `Generate a ${tone} ${contentType} script for the following goal: "${goal}". The target audience is: ${targetAudience}.`;
+
   try{
-    const ideas = await geminigenerate(niche);
+    const ideas = await geminigenerate(prompt);
 
     for(const idea of ideas) {
       await supabase.from('ideas').insert([
         {
-          user_id:userId,
           idea_text:idea,
           created_at:new Date().toISOString(),
         },

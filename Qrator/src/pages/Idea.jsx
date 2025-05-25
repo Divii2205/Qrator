@@ -93,24 +93,35 @@ function Idea() {
       e.preventDefault();
       // console.log(formData)
 
-      const dataRes = await fetch('http://localhost:4000/generate/idea' , {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData),
-      }) 
-
-      console.log(dataRes)
-
       setIsLoading(true);
       setError(null);
 
       try {
-        const response = await mockGenerateIdeas(formData);
-        setGeneratedContent(response);
+        const response = await fetch("http://localhost:4000/generate/idea", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        console.log(response);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to generate ideas.");
+        }
+
+        const data = await response.json();
+        setGeneratedContent({
+          ideas: data.ideas,
+          contentType: formData.contentType,
+          tone: formData.tone,
+          targetAudience: formData.targetAudience,
+        });
       } catch (err) {
-        setError("Failed to generate ideas. Please try again.");
+        setError(err.message || "Failed to generate ideas. Please try again.");
+        setGeneratedContent(null);
         console.error("Error:", err);
       } finally {
         setIsLoading(false);
