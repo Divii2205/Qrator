@@ -3,9 +3,12 @@ import logo from "../assets/full-logo.png";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 
-function Background({children,showFooter = true,showNavbar =true}){
-  return(
-    <div className="min-h-screen relative overflow-auto flex flex-col" style={{ minHeight: '100vh' }}>
+function Background({ children, showFooter = true, showNavbar = true }) {
+  return (
+    <div
+      className="min-h-screen relative overflow-auto flex flex-col"
+      style={{ minHeight: "100vh" }}
+    >
       <div className="fixed inset-0 w-full h-full">
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-gray-900" />
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900/90 via-blue-950/40 to-slate-900/80" />
@@ -23,15 +26,14 @@ function Background({children,showFooter = true,showNavbar =true}){
           </div>
 
           <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-20 flex items-center">
-            {showNavbar && <Navbar/>}
+            {showNavbar && <Navbar />}
           </div>
         </>
         <main className="flex-grow flex items-center justify-center px-8 z-10 relative">
           {children}
         </main>
-        {showFooter && <Footer/>}
+        {showFooter && <Footer />}
       </div>
-      {showFooter && <Footer/>}
     </div>
   );
 }

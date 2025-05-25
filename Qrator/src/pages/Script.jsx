@@ -1,99 +1,137 @@
-import React, { useState } from 'react';
-import { FileText, Play, Download, Copy, Lightbulb, Settings, User, Moon, Sun } from 'lucide-react';
-import Background from '../components/Background';
+import React, { useState, useMemo, useCallback } from "react";
+import Background from "../components/Background";
 
-const Script = () => {
+const SCRIPTS_BY_TYPE = {
+  youtube: [
+    {
+      title: "How to Start a Sustainable Lifestyle",
+      hook: "Did you know that the average person generates over 4 pounds of waste every day? But what if I told you that you could cut that in half with just a few simple changes?",
+      outline: [
+        "Introduction and shocking statistics about waste",
+        "Three easy sustainable swaps for beginners",
+        "Cost savings breakdown",
+        "Common mistakes to avoid",
+        "Call to action and community challenge",
+      ],
+    },
+  ],
+  podcast: [
+    {
+      title: "The Green Revolution: Episode 1",
+      hook: "Welcome to The Green Revolution, where we explore how small changes can make a big impact on our planet. Today, we're diving into the world of sustainable living.",
+      outline: [
+        "Show introduction and topic overview",
+        "Guest expert introduction",
+        "Main discussion points about sustainable living",
+        "Listener questions segment",
+        "Action steps and next episode preview",
+      ],
+    },
+  ],
+  video: [
+    {
+      title: "5 Eco-Friendly Home Hacks",
+      hook: "Transform your home into an eco-friendly paradise without breaking the bank! These simple hacks will save you money and help save the planet.",
+      outline: [
+        "Quick montage of before/after results",
+        "Hack #1: DIY natural cleaning solutions",
+        "Hack #2: Energy-saving techniques",
+        "Hack #3: Water conservation methods",
+        "Wrap-up and viewer challenge",
+      ],
+    },
+  ],
+};
+
+const mockGenerateScript = async (data) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const scriptTemplate = SCRIPTS_BY_TYPE[data.scriptType][0];
+  return {
+    ...scriptTemplate,
+    scriptType: data.scriptType,
+    targetAudience: data.targetAudience,
+    duration: data.duration,
+    style: data.style,
+  };
+};
+
+const ScriptTypeButton = React.memo(({ type, selected, onClick }) => (
+  <button
+    type="button"
+    onClick={() => onClick(type)}
+    className={`py-2 px-4 rounded-lg capitalize ${
+      selected
+        ? "bg-blue-500 text-white"
+        : "bg-slate-600 text-gray-300 hover:bg-slate-500"
+    }`}
+  >
+    {type}
+  </button>
+));
+
+const OutlinePoint = React.memo(({ point, index }) => (
+  <div className="flex items-start gap-4 p-4 bg-slate-600/30 rounded-lg">
+    <span className="text-blue-400 font-semibold">{index + 1}.</span>
+    <p className="text-white">{point}</p>
+  </div>
+));
+
+function Script() {
   const [formData, setFormData] = useState({
-    title: '',
-    scriptType: '',
-    duration: '',
-    keyPoints: ''
+    scriptType: "youtube",
+    targetAudience: "",
+    duration: "",
+    style: "",
+    topic: "",
+    keyPoints: "",
   });
-  
-  const [generatedScript, setGeneratedScript] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const [copiedToClipboard, setCopiedToClipboard] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [generatedScript, setGeneratedScript] = useState(null);
 
-  const scriptTypes = [
-    'Tutorial/Educational',
-    'Product Review',
-    'Explainer Video',
-    'Marketing/Promotional',
-    'Interview',
-    'Presentation',
-    'Social Media Content',
-    'Podcast Script'
-  ];
+  const handleScriptTypeChange = useCallback((type) => {
+    setFormData((prev) => ({ ...prev, scriptType: type }));
+  }, []);
 
-  const durations = [
-    '30 seconds',
-    '1 minute',
-    '2-3 minutes',
-    '5 minutes',
-    '10 minutes',
-    '15+ minutes'
-  ];
-
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [name]: value,
     }));
-  };
-  const generateScript = async () => {
-    if (!formData.title || !formData.scriptType || !formData.duration) {
-      alert('Please fill in all required fields');
-      return;
-    }
+  }, []);
 
-    setIsGenerating(true);
-    
-    // Simulate API call with realistic delay
-    setTimeout(() => {
-      const sampleScript = `# ${formData.title}
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setIsLoading(true);
+      setError(null);
 
-## Introduction (0:00 - 0:15)
-Welcome back to our channel! Today we're diving into ${formData.title}. This is going to be an incredibly valuable session, so make sure to stick around until the end.
+      try {
+        const response = await mockGenerateScript(formData);
+        setGeneratedScript(response);
+      } catch (err) {
+        setError("Failed to generate script. Please try again.");
+        console.error("Error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [formData]
+  );
 
-## Main Content (0:15 - 0:45)
-Let me break this down for you step by step:
-
-${formData.keyPoints.split('\n').filter(point => point.trim()).map((point, index) => 
-  `### Point ${index + 1}
-${point.replace('- ', '')}
-This is crucial because it directly impacts your understanding and success with this topic.`
-).join('\n\n')}
-
-\\
-*Duration: ${formData.duration} | Type: ${formData.scriptType}*`;
-
-      setGeneratedScript(sampleScript);
-      setIsGenerating(false);
-    }, 2000);
-  };
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(generatedScript);
-      setCopiedToClipboard(true);
-      setTimeout(() => setCopiedToClipboard(false), 2000);
-    } catch (error) {
-      console.error('Failed to copy to clipboard:', error);
-    }
-  };
-
-  const downloadScript = () => {
-    const blob = new Blob([generatedScript], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${formData.title.replace(/\s+/g, '-').toLowerCase()}-script.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+  const scriptTypeButtons = useMemo(
+    () =>
+      ["youtube", "podcast", "video"].map((type) => (
+        <ScriptTypeButton
+          key={type}
+          type={type}
+          selected={formData.scriptType === type}
+          onClick={handleScriptTypeChange}
+        />
+      )),
+    [formData.scriptType, handleScriptTypeChange]
+  );
 
   return (
     <Background>
@@ -102,85 +140,149 @@ This is crucial because it directly impacts your understanding and success with 
         <div className="w-full lg:w-1/2 p-6 lg:p-8 overflow-y-auto">
           <div className="max-w-2xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-white text-4xl font-bold mb-4">Script Generator</h1>
-              <p className="text-gray-300 text-lg">Transform your goals into engaging content scripts</p>
+              <h1 className="text-white text-4xl font-bold mb-4">
+                Script Generator
+              </h1>
+              <p className="text-gray-300 text-lg">
+                Transform your ideas into engaging scripts
+              </p>
             </div>
 
             <div className="bg-slate-700/50 rounded-xl p-6 backdrop-blur-sm shadow-xl">
-              <div className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Video/Content Title *
+                  <label className="block text-white text-lg mb-2">
+                    Script Type
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {scriptTypeButtons}
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="style"
+                    className="block text-white text-lg mb-2"
+                  >
+                    Content Style
+                  </label>
+                  <select
+                    id="style"
+                    name="style"
+                    value={formData.style}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
+                  >
+                    <option value="">Select a style</option>
+                    <option value="educational">Educational</option>
+                    <option value="entertaining">Entertaining</option>
+                    <option value="tutorial">Tutorial</option>
+                    <option value="storytelling">Storytelling</option>
+                    <option value="interview">Interview</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="duration"
+                    className="block text-white text-lg mb-2"
+                  >
+                    Target Duration
+                  </label>
+                  <select
+                    id="duration"
+                    name="duration"
+                    value={formData.duration}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    required
+                  >
+                    <option value="">Select duration</option>
+                    <option value="short">Short (3-5 minutes)</option>
+                    <option value="medium">Medium (5-10 minutes)</option>
+                    <option value="long">Long (10-15 minutes)</option>
+                    <option value="extended">Extended (15+ minutes)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="targetAudience"
+                    className="block text-white text-lg mb-2"
+                  >
+                    Target Audience
                   </label>
                   <input
                     type="text"
-                    value={formData.title}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
-                    placeholder="e.g., Complete React Tutorial for Beginners"
-                    className="w-full px-4 py-3 bg-[#0f172a] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    id="targetAudience"
+                    name="targetAudience"
+                    value={formData.targetAudience}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="e.g., Beginners, Tech enthusiasts"
+                    required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Script Type *
-                  </label>
-                  <select
-                    value={formData.scriptType}
-                    onChange={(e) => handleInputChange('scriptType', e.target.value)}
-                    className="w-full px-4 py-3 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  <label
+                    htmlFor="topic"
+                    className="block text-white text-lg mb-2"
                   >
-                    <option value="">Select script type</option>
-                    {scriptTypes.map((type) => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
+                    Main Topic
+                  </label>
+                  <input
+                    type="text"
+                    id="topic"
+                    name="topic"
+                    value={formData.topic}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder="e.g., Sustainable living tips"
+                    required
+                  />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Duration *
-                  </label>
-                  <select
-                    value={formData.duration}
-                    onChange={(e) => handleInputChange('duration', e.target.value)}
-                    className="w-full px-4 py-3 bg-[#0f172a] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                <div className="relative">
+                  <label
+                    htmlFor="keyPoints"
+                    className="block text-white text-lg mb-2"
                   >
-                    <option value="">Select duration</option>
-                    {durations.map((duration) => (
-                      <option key={duration} value={duration}>{duration}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Key Points to Cover
                   </label>
                   <textarea
+                    id="keyPoints"
+                    name="keyPoints"
                     value={formData.keyPoints}
-                    onChange={(e) => handleInputChange('keyPoints', e.target.value)}
-                    placeholder="List the main points you want to cover (one per line)"
-                    rows={6}
-                    className="w-full px-4 py-3 bg-[#0f172a] border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 min-h-[150px]"
+                    placeholder="List the main points you want to cover in your content..."
+                    required
                   />
                 </div>
 
                 <button
-                  onClick={generateScript}
-                  disabled={isGenerating}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-lg font-semibold rounded-lg shadow-lg hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 relative"
                 >
-                  {isGenerating ? (
+                  {isLoading ? (
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-2"></div>
                       Generating Script...
                     </div>
                   ) : (
-                    'Generate Script'
+                    "Generate Script"
                   )}
                 </button>
-              </div>
+              </form>
+
+              {error && (
+                <div className="mt-6 p-4 bg-red-500/20 border border-red-500 rounded-lg">
+                  <p className="text-red-300">{error}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -189,9 +291,11 @@ This is crucial because it directly impacts your understanding and success with 
         <div className="w-full lg:w-1/2 p-6 lg:p-8 border-t lg:border-t-0 lg:border-l border-slate-600/50">
           <div className="max-w-2xl mx-auto">
             <div className="sticky top-24">
-              <h2 className="text-white text-2xl font-semibold mb-6">Generated Script</h2>
+              <h2 className="text-white text-2xl font-semibold mb-6">
+                Generated Script
+              </h2>
 
-              {!generatedScript && !isGenerating && (
+              {!generatedScript && !isLoading && (
                 <div className="bg-slate-700/30 rounded-xl p-8 text-center">
                   <p className="text-gray-400 text-lg">
                     Fill out the form to generate your script
@@ -199,34 +303,59 @@ This is crucial because it directly impacts your understanding and success with 
                 </div>
               )}
 
-              {isGenerating && (
+              {isLoading && (
                 <div className="bg-slate-700/30 rounded-xl p-8 text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                  <p className="text-gray-400 text-lg">Generating your script...</p>
+                  <p className="text-gray-400 text-lg">
+                    Crafting your perfect script...
+                  </p>
                 </div>
               )}
 
-              {generatedScript && !isGenerating && (
-                <div className="bg-[#0f172a] rounded-lg p-4 border border-gray-700">
-                  <div className="flex justify-end gap-2 mb-4">
-                    <button
-                      onClick={copyToClipboard}
-                      className="px-4 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-white rounded-lg transition-colors flex items-center gap-2"
-                    >
-                      <Copy className="h-4 w-4" />
-                      {copiedToClipboard ? 'Copied!' : 'Copy'}
-                    </button>
-                    <button
-                      onClick={downloadScript}
-                      className="px-4 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-white rounded-lg transition-colors flex items-center gap-2"
-                    >
-                      <Download className="h-4 w-4" />
-                      Download
-                    </button>
+              {generatedScript && !isLoading && (
+                <div className="space-y-6">
+                  <div className="flex gap-2 mb-6">
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                      {generatedScript.scriptType}
+                    </span>
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                      {generatedScript.style}
+                    </span>
+                    <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">
+                      {generatedScript.duration}
+                    </span>
                   </div>
-                  <pre className="text-gray-200 text-sm whitespace-pre-wrap font-mono leading-relaxed">
-                    {generatedScript}
-                  </pre>
+
+                  <div className="space-y-6">
+                    <div className="bg-slate-700/30 rounded-lg p-6">
+                      <h3 className="text-xl font-semibold text-white mb-2">
+                        Title
+                      </h3>
+                      <p className="text-blue-300">{generatedScript.title}</p>
+                    </div>
+
+                    <div className="bg-slate-700/30 rounded-lg p-6">
+                      <h3 className="text-xl font-semibold text-white mb-2">
+                        Hook
+                      </h3>
+                      <p className="text-blue-300">{generatedScript.hook}</p>
+                    </div>
+
+                    <div className="bg-slate-700/30 rounded-lg p-6">
+                      <h3 className="text-xl font-semibold text-white mb-4">
+                        Script Outline
+                      </h3>
+                      <div className="space-y-3">
+                        {generatedScript.outline.map((point, index) => (
+                          <OutlinePoint
+                            key={index}
+                            point={point}
+                            index={index}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -235,6 +364,6 @@ This is crucial because it directly impacts your understanding and success with 
       </div>
     </Background>
   );
-};
+}
 
 export default Script;
