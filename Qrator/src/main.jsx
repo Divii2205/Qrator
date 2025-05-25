@@ -10,6 +10,7 @@ import SEO from "./pages/SEO.jsx";
 import Thumbnail from "./pages/Thumbnail.jsx";
 import Calendar from "./pages/Calendar.jsx";
 import Vault from "./pages/Vault.jsx";
+import AuthCallback from "./components/AuthCallback.jsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="seo" element={<SEO />} />
         <Route path="calendar" element={<Calendar />} />
         <Route path="vault" element={<Vault />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
