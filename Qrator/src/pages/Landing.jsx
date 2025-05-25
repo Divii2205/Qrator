@@ -19,6 +19,8 @@ export default function Landing() {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
+  const [user, setUser] = useState(null);
+
 
   useEffect(() => {
     setIsVisible(true);
