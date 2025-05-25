@@ -1,13 +1,43 @@
 import { ArrowRight, Lightbulb, FileText, Image, Calendar, Search, Vault, Sparkles, Play, Users, Trophy, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import Background from "../components/Background";
+import { supabase } from "../supabaseClient";
 
 export default function Landing() {
   const [isVisible, setIsVisible] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
+  const [user, setUser] = useState(null);
+
 
   useEffect(() => {
     setIsVisible(true);
+
+    useEffect(() => {
+    // Get session on component mount
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+
+    getSession();
+
+    // Listen to auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  const handleSignIn = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        scopes: 'https://www.googleapis.com/auth/youtube.readonly',
+        redirectTo: window.location.origin, // or '/dashboard' if using routes
+      }
+    });
+  };
     
     // Auto-rotate featured highlights
     const interval = setInterval(() => {
@@ -16,6 +46,13 @@ export default function Landing() {
     
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      console.log("✅ Logged in as", user.email);
+      // Optionally: navigate("/dashboard");
+    }
+  }, [user]);
 
   const features = [
     {
