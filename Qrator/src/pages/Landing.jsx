@@ -163,8 +163,7 @@ export default function Landing() {
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  onClick={() => navigate(feature.path)}
-                  className="group cursor-pointer bg-slate-700/30 backdrop-blur-sm border border-slate-600/50 rounded-xl p-8 hover:bg-slate-700/50 hover:border-blue-500/50 transition-all duration-300 transform hover:-translate-y-1"
+                  className="group bg-slate-700/30 backdrop-blur-sm border border-slate-600/50 rounded-xl p-8 hover:bg-slate-700/50 hover:border-blue-500/50 transition-all duration-300"
                 >
                   <div className="flex items-center gap-4 mb-4">
                     <div className="p-3 rounded-lg bg-slate-800/50 group-hover:bg-blue-500/20 transition-colors duration-300">

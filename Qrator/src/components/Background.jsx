@@ -2,6 +2,7 @@ import React from "react";
 import logo from "../assets/full-logo.png";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
+import UserDropdown from "./UserDropdown";
 
 function Background({ children, showFooter = true, showNavbar = true }) {
   return (
@@ -27,6 +28,10 @@ function Background({ children, showFooter = true, showNavbar = true }) {
 
           <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-20 flex items-center">
             {showNavbar && <Navbar />}
+          </div>
+
+          <div className="absolute top-9 right-12 z-20 flex items-center">
+            <UserDropdown />
           </div>
         </>
         <main className="flex-grow flex items-center justify-center px-8 z-10 relative">
