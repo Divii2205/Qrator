@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Background from "../components/Background";
+import Auth from "../components/Auth";
 import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
@@ -148,18 +149,7 @@ export default function Landing() {
               </div>
 
               <div className="flex gap-6 justify-center pt-8">
-                <button
-                  onClick={() => navigate("/home")}
-                  className="cursor-pointer px-12 py-4 bg-gradient-to-b from-indigo-600 to-blue-500 text-white text-2xl font-semibold rounded-full hover:from-indigo-700 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                >
-                  SIGN IN
-                </button>
-                <button
-                  onClick={() => navigate("/home")}
-                  className="cursor-pointer px-12 py-4 bg-gradient-to-b from-indigo-600 to-blue-500 text-white text-2xl font-semibold rounded-full hover:from-indigo-700 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                >
-                  SIGN UP
-                </button>
+                <Auth />
               </div>
             </div>
           </div>
