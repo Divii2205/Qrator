@@ -104,26 +104,55 @@ function Script() {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-
-      const dataRes = await fetch('http://localhost:4000/script/text' , {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData),
-      }) 
-
-      console.log(dataRes)
-
-
       setIsLoading(true);
       setError(null);
+      setGeneratedScript(null);
 
       try {
-        const response = await mockGenerateScript(formData);
-        setGeneratedScript(response);
+        const response = await fetch('http://localhost:4000/script/text', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to generate script.");
+        }
+
+        const data = await response.json();
+        const scriptText = data.script || "";
+
+// Split by lines and filter out empty lines
+const lines = scriptText.split('\n').map(line => line.trim()).filter(Boolean);
+
+// Find the title line (look for a line starting with **Title:**)
+const titleLine = lines.find(line => line.toLowerCase().startsWith('**title:**'));
+const title = titleLine ? titleLine.replace(/\*\*Title:\*\*/i, '').trim() : formData.topic;
+
+// Find the first "hook" section (for demo, let's use the first non-title, non-empty line)
+const hookIndex = lines.findIndex(line => line.toLowerCase().includes('hook'));
+const hook = hookIndex !== -1 && lines[hookIndex + 1] ? lines[hookIndex + 1] : "";
+
+// For outline, grab all lines after the hook section (customize as needed)
+const outlineStart = hookIndex + 2;
+const outline = lines.slice(outlineStart);
+
+setGeneratedScript({
+  title,
+  hook,
+  outline,
+  scriptType: formData.scriptType,
+  targetAudience: formData.targetAudience,
+  duration: formData.duration,
+  style: formData.style,
+});
+
       } catch (err) {
-        setError("Failed to generate script. Please try again.");
+        setError(err.message || "Failed to generate script. Please try again.");
+        setGeneratedScript(null);
         console.error("Error:", err);
       } finally {
         setIsLoading(false);
