@@ -29,5 +29,4 @@ router.post('/idea',async(req,res)=> {
     res.status(500).json({err:'Failed to generate ideas'});
   }
 });
-
 export default router;
