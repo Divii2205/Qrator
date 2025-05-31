@@ -109,7 +109,7 @@ function Script() {
       setGeneratedScript(null);
 
       try {
-        const response = await fetch('http://localhost:4000/script/text', {
+        const response = await fetch('https://qrator-pi.vercel.app/script/text', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
