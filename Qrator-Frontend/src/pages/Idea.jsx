@@ -97,7 +97,7 @@ function Idea() {
       setError(null);
 
       try {
-        const response = await fetch("https://qrator-pi.vercel.app/generate/idea", {
+        const response = await fetch("https://qrator-wnf4.onrender.com/generate/idea", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

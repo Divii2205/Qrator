@@ -9,7 +9,9 @@ import calendarRoutes from "./routes/calender.js";
 import seoRoutes from './routes/seo.js';
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "https://qrator-pi.vercel.app"
+}));
 app.use(express.json());
 app.use(express.urlencoded({extended : true})) 
 app.use('/generate', generateRoutes);

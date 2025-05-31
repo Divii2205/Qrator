@@ -4,10 +4,8 @@ import supabase from '../utils/supabaseClient.js';
 const router= express.Router();
 
 router.post('/idea',async(req,res)=> {
-  // const {userId,niche} = req.body;
-  // console.log(req.body)
+  console.log('BODY:', req.body);
   const {goal , tone , targetAudience , contentType} = req.body
-  // console.log(goal , tone)
 
   if (!goal || !tone || !targetAudience || !contentType) {
     return res.status(400).json({ error: 'All fields are required' });
@@ -30,7 +28,7 @@ router.post('/idea',async(req,res)=> {
   }
   catch(err){
     console.error('Error generating ideas:',err.message);
-    res.status(500).json({err:'Failed to generate ideas'});
+    res.status(500).json({error:'Failed to generate ideas'});
   }
 });
 export default router;
