@@ -7,11 +7,14 @@ router.post('/idea',async(req,res)=> {
   console.log('BODY:', req.body);
   const {goal , tone , targetAudience , contentType} = req.body
 
-  if (!goal || !tone || !targetAudience || !contentType) {
+  if (!tone || !targetAudience || !contentType) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  const prompt = `Generate a ${tone} ${contentType} script for the following goal: "${goal}". The target audience is: ${targetAudience}.`;
+  const prompt = goal && goal.trim() !== "" ?
+  `Generate a ${tone} ${contentType} idea title for the following goal: "${goal}". The target audience is: ${targetAudience}.`
+  : `Generate a ${tone} ${contentType} idea title. The target audience is: ${targetAudience}.`;
+
 
   try{
     const ideas = await geminigenerate(prompt);

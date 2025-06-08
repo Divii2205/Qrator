@@ -109,7 +109,7 @@ function Script() {
       setGeneratedScript(null);
 
       try {
-        const response = await fetch('https://qrator-wnf4.onrender.com/script/text', {
+        const response = await fetch(`${API_BASE_URL}/script/text`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -406,5 +406,10 @@ setGeneratedScript({
     </Background>
   );
 }
+
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:4000"
+    : "https://qrator-wnf4.onrender.com";
 
 export default Script;

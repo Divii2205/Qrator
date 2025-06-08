@@ -6,7 +6,7 @@ export async function geminigenerate(niche) {
   const body = {
     contents: [
       {
-        parts: [{ text: `Give me 3 engaging YouTube video ideas for a channel about ${niche}. Only return the titles.`}],
+        parts: [{ text: `Give me 5 engaging YouTube video ideas for a channel about ${niche}. Only return the titles.`}],
       },
     ],
   };
@@ -14,7 +14,20 @@ export async function geminigenerate(niche) {
   try{
     const response =await axios.post(url, body);
     const text = response.data.candidates[0]?.content?.parts[0]?.text || '';
-    const ideas = text.split('\n').map(line => line.replace(/^\d+\.\s*/, '').trim()).filter(Boolean);
+    // Remove leading/trailing "**" from each idea (and trim whitespace)
+    const ideas = text
+      .split('\n')
+      .map(line =>
+        line
+          .replace(/^\d+\.\s*/, '')      // Remove leading number and dot
+          .replace(/^\*+|\*+$/g, '')     // Remove leading/trailing asterisks
+          .trim()
+      )
+      .filter(line =>
+        Boolean(line) &&
+        !/^okay\b/i.test(line) && // Exclude lines starting with "okay"
+        !/^here (are|is)/i.test(line)// Exclude lines starting with "here are/is"
+      );
     return ideas;
   }
   catch (err) {

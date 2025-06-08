@@ -1,40 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import Background from "../components/Background";
 
-const IDEAS_BY_TYPE = {
-  video: [
-    "Create a day-in-the-life vlog showcasing sustainable living practices",
-    "Film a tutorial series on eco-friendly home improvements",
-    "Produce a mini-documentary about local environmental initiatives",
-    "Start a weekly Q&A series addressing common sustainability myths",
-    "Launch a challenge series for reducing carbon footprint",
-  ],
-  blog: [
-    "Write a comprehensive guide on starting a zero-waste lifestyle",
-    "Create a series on sustainable fashion choices and their impact",
-    "Develop a weekly sustainable recipe blog series",
-    "Share success stories of people who've gone plastic-free",
-    "Craft educational posts about renewable energy solutions",
-  ],
-  social: [
-    "Design infographic series about quick eco-friendly tips",
-    "Create daily sustainable living challenges for Instagram",
-    "Share before/after transformations of sustainable switches",
-    "Develop a TikTok series on quick sustainable life hacks",
-    "Post weekly sustainable product reviews and alternatives",
-  ],
-};
-
-const mockGenerateIdeas = async (data) => {
-  await new Promise((resolve) => setTimeout(resolve, 500)); // Reduced delay to 500ms
-  return {
-    ideas: IDEAS_BY_TYPE[data.contentType] || IDEAS_BY_TYPE.video,
-    contentType: data.contentType,
-    tone: data.tone,
-    targetAudience: data.targetAudience,
-  };
-};
-
 const ContentTypeButton = React.memo(({ type, selected, onClick }) => (
   <button
     type="button"
@@ -71,33 +37,65 @@ function Idea() {
   const [error, setError] = useState(null);
   const [generatedContent, setGeneratedContent] = useState(null);
   const [charCount, setCharCount] = useState(0);
+  const [showCustomTone, setShowCustomTone] = useState(false);
 
   const handleContentTypeChange = useCallback((type) => {
     setFormData((prev) => ({ ...prev, contentType: type }));
   }, []);
 
-  const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleInputChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
 
-    if (name === "goal") {
-      setCharCount(value.length);
-    }
-  }, []);
+      // Show custom tone input if "other" is selected in the select box
+      if (name === "tone" && e.target.tagName === "SELECT") {
+        if (value === "other") {
+          setShowCustomTone(true);
+          setFormData((prev) => ({
+            ...prev,
+            tone: "",
+          }));
+        } else {
+          setShowCustomTone(false);
+          setFormData((prev) => ({
+            ...prev,
+            tone: value,
+          }));
+        }
+        return;
+      }
+
+      // For custom tone input box
+      if (name === "tone" && showCustomTone && e.target.tagName === "INPUT") {
+        setFormData((prev) => ({
+          ...prev,
+          tone: value,
+        }));
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      if (name === "goal") {
+        setCharCount(value.length);
+      }
+    },
+    [showCustomTone]
+  );
 
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      // console.log(formData)
+      console.log(formData)
 
       setIsLoading(true);
       setError(null);
 
       try {
-        const response = await fetch("https://qrator-wnf4.onrender.com/generate/idea", {
+        const response = await fetch(`${API_BASE_URL}/generate/idea`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -132,7 +130,7 @@ function Idea() {
 
   const contentTypeButtons = useMemo(
     () =>
-      ["video", "blog", "social"].map((type) => (
+      ["video", "shorts", "post"].map((type) => (
         <ContentTypeButton
           key={type}
           type={type}
@@ -162,7 +160,7 @@ function Idea() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="block text-white text-lg mb-2">
-                    Content Type
+                    Content Type*
                   </label>
                   <div className="grid grid-cols-3 gap-3">
                     {contentTypeButtons}
@@ -174,23 +172,39 @@ function Idea() {
                     htmlFor="tone"
                     className="block text-white text-lg mb-2"
                   >
-                    Content Tone
+                    Content Tone*
                   </label>
-                  <select
-                    id="tone"
-                    name="tone"
-                    value={formData.tone}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    required
-                  >
-                    <option value="">Select a tone</option>
-                    <option value="professional">Professional</option>
-                    <option value="casual">Casual</option>
-                    <option value="humorous">Humorous</option>
-                    <option value="educational">Educational</option>
-                    <option value="inspirational">Inspirational</option>
-                  </select>
+                  <div className={`flex items-center gap-2`}>
+                    <select
+                      id="tone"
+                      name="tone"
+                      value={showCustomTone ? "other" : formData.tone}
+                      onChange={handleInputChange}
+                      className={`px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400
+        ${showCustomTone ? "w-1/2 min-w-[140px]" : "w-full"}`}
+                      required
+                    >
+                      <option value="">Select a tone</option>
+                      <option value="professional">Professional</option>
+                      <option value="casual">Casual</option>
+                      <option value="humorous">Humorous</option>
+                      <option value="educational">Educational</option>
+                      <option value="inspirational">Inspirational</option>
+                      <option value="sarcastic">Sarcastic</option>
+                      <option value="other">Other...</option>
+                    </select>
+                    {showCustomTone && (
+                      <input
+                        type="text"
+                        name="tone"
+                        value={formData.tone}
+                        onChange={handleInputChange}
+                        className="flex-1 px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Enter your custom tone"
+                        required
+                      />
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -198,7 +212,7 @@ function Idea() {
                     htmlFor="targetAudience"
                     className="block text-white text-lg mb-2"
                   >
-                    Target Audience
+                    Target Audience*
                   </label>
                   <input
                     type="text"
@@ -225,8 +239,7 @@ function Idea() {
                     value={formData.goal}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 min-h-[150px]"
-                    placeholder="Describe your content goals, target impact, and any specific themes you want to focus on..."
-                    required
+                    placeholder="Describe your content goals, target impact, any specific themes you want to focus on, or any language you prefer in particular..."
                   />
                   <div className="absolute bottom-2 right-2 text-sm text-gray-400">
                     {charCount}/500
@@ -243,6 +256,8 @@ function Idea() {
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-2"></div>
                       Generating Ideas...
                     </div>
+                  ) : generatedContent ? (
+                    "Generate Again"
                   ) : (
                     "Generate Ideas"
                   )}
@@ -260,47 +275,52 @@ function Idea() {
 
         {/* Right Side - Output */}
         <div className="w-full lg:w-1/2 p-6 lg:p-8 border-t lg:border-t-0 lg:border-l border-slate-600/50">
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto h-full">
             <div className="sticky top-24">
               <h2 className="text-white text-2xl font-semibold mb-6">
                 Generated Ideas
               </h2>
 
-              {!generatedContent && !isLoading && (
-                <div className="bg-slate-700/30 rounded-xl p-8 text-center">
-                  <p className="text-gray-400 text-lg">
-                    Fill out the form to generate content ideas
-                  </p>
-                </div>
-              )}
-
-              {isLoading && (
-                <div className="bg-slate-700/30 rounded-xl p-8 text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                  <p className="text-gray-400 text-lg">
-                    Generating amazing ideas for you...
-                  </p>
-                </div>
-              )}
-
-              {generatedContent && !isLoading && (
-                <div className="space-y-6">
-                  <div className="flex gap-2 mb-6">
-                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
-                      {generatedContent.contentType}
-                    </span>
-                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
-                      {generatedContent.tone}
-                    </span>
+              <div
+                className="max-h-[70vh] overflow-y-auto pr-2"
+                style={{ scrollbarGutter: "stable" }}
+              >
+                {!generatedContent && !isLoading && (
+                  <div className="bg-slate-700/30 rounded-xl p-8 text-center">
+                    <p className="text-gray-400 text-lg">
+                      Fill out the form to generate content ideas
+                    </p>
                   </div>
+                )}
 
-                  <div className="space-y-4">
-                    {generatedContent.ideas.map((idea, index) => (
-                      <IdeaCard key={index} index={index} idea={idea} />
-                    ))}
+                {isLoading && (
+                  <div className="bg-slate-700/30 rounded-xl p-8 text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p className="text-gray-400 text-lg">
+                      Generating amazing ideas for you...
+                    </p>
                   </div>
-                </div>
-              )}
+                )}
+
+                {generatedContent && !isLoading && (
+                  <div className="space-y-6">
+                    <div className="flex gap-2 mb-6">
+                      <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                        {generatedContent.contentType}
+                      </span>
+                      <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                        {generatedContent.tone}
+                      </span>
+                    </div>
+
+                    <div className="space-y-4">
+                      {generatedContent.ideas.map((idea, index) => (
+                        <IdeaCard key={index} index={index} idea={idea} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -308,5 +328,10 @@ function Idea() {
     </Background>
   );
 }
+
+const API_BASE_URL =
+  window.location.hostname === "localhost"
+    ? "http://localhost:4000"
+    : "https://qrator-wnf4.onrender.com";
 
 export default Idea;

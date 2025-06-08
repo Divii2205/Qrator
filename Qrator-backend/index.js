@@ -10,7 +10,7 @@ import seoRoutes from './routes/seo.js';
 const app = express();
 
 app.use(cors({
-  origin: "https://qrator-pi.vercel.app"
+  origin: ["https://qrator-pi.vercel.app", "http://localhost:5173"]
 }));
 app.use(express.json());
 app.use(express.urlencoded({extended : true})) 
