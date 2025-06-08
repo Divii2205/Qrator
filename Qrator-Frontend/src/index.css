@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+/* Always apply background and text color for autofill */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #425268f2 inset !important; /* bg-slate-600 */
+  -webkit-text-fill-color: #fff !important;
+  color: #fff !important;
+  caret-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Add blue ring on focus */
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill:focus {
+  outline: 0.1px solid #60a5fa !important;      /* Tailwind blue-400 */
+  outline-offset: 0.1px !important;
+  -webkit-box-shadow: 0 0 0 1000px #425268f2 inset, 0 0 0 2px #60a5fa !important;
+  box-shadow: 0 0 0 1000px #425268f2 inset, 0 0 0 2px #60a5fa !important;
+}

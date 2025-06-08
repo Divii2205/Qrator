@@ -19,9 +19,12 @@ const IdeaCard = React.memo(({ index, idea }) => (
   <div className="p-4 bg-slate-600/30 rounded-lg border border-slate-500/50 hover:border-blue-500/50 transition-all duration-300 group">
     <div className="flex items-start gap-4">
       <span className="text-blue-400 text-lg font-semibold">#{index + 1}</span>
-      <p className="text-white group-hover:text-blue-300 transition-colors duration-300">
-        {idea}
-      </p>
+      <div>
+        <p className="text-white font-semibold group-hover:text-blue-300 transition-colors duration-300">
+          {idea.title}
+        </p>
+        <p className="text-gray-300 text-sm mt-1">{idea.description}</p>
+      </div>
     </div>
   </div>
 ));
@@ -89,7 +92,7 @@ function Idea() {
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      console.log(formData)
+      console.log(formData);
 
       setIsLoading(true);
       setError(null);
@@ -199,7 +202,7 @@ function Idea() {
                         name="tone"
                         value={formData.tone}
                         onChange={handleInputChange}
-                        className="flex-1 px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="flex-1 px-4 py-2 rounded-lg bg-slate-600 !important text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
                         placeholder="Enter your custom tone"
                         required
                       />
@@ -220,7 +223,7 @@ function Idea() {
                     name="targetAudience"
                     value={formData.targetAudience}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full px-4 py-2 rounded-lg bg-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 !important"
                     placeholder="e.g., Young professionals, Tech enthusiasts"
                     required
                   />
@@ -282,7 +285,7 @@ function Idea() {
               </h2>
 
               <div
-                className="max-h-[70vh] overflow-y-auto pr-2"
+                className="max-h-[85vh] min-h-[400px] overflow-y-auto pr-2"
                 style={{ scrollbarGutter: "stable" }}
               >
                 {!generatedContent && !isLoading && (
