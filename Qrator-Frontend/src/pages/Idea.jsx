@@ -15,11 +15,46 @@ const ContentTypeButton = React.memo(({ type, selected, onClick }) => (
   </button>
 ));
 
-const IdeaCard = React.memo(({ index, idea }) => (
-  <div className="p-4 bg-slate-600/30 rounded-lg border border-slate-500/50 hover:border-blue-500/50 transition-all duration-300 group">
+const IdeaCard = React.memo(({ index, idea, saved, onToggleSave }) => (
+  <div className="relative p-4 bg-slate-600/30 rounded-lg border border-slate-500/50 hover:border-blue-500/50 transition-all duration-300 group">
+    {/* Save Icon Top Right */}
+    <button
+      type="button"
+      className="absolute top-3 right-3 text-blue-400 hover:text-blue-500 transition"
+      onClick={() => onToggleSave(index)}
+      aria-label={saved ? "Unsave" : "Save"}
+    >
+      {saved ? (
+        // Filled Bookmark
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          className="w-6 h-6"
+        >
+          <path d="M5 3a2 2 0 0 0-2 2v13l7-4 7 4V5a2 2 0 0 0-2-2H5z" />
+        </svg>
+      ) : (
+        // Outline Bookmark
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 20 20"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 3a2 2 0 0 0-2 2v13l7-4 7 4V5a2 2 0 0 0-2-2H5z"
+          />
+        </svg>
+      )}
+    </button>
     <div className="flex items-start gap-4">
       <span className="text-blue-400 text-lg font-semibold">#{index + 1}</span>
-      <div>
+      <div className="flex-1 pr-8">
         <p className="text-white font-semibold group-hover:text-blue-300 transition-colors duration-300">
           {idea.title}
         </p>
@@ -41,6 +76,7 @@ function Idea() {
   const [generatedContent, setGeneratedContent] = useState(null);
   const [charCount, setCharCount] = useState(0);
   const [showCustomTone, setShowCustomTone] = useState(false);
+  const [savedIdeas, setSavedIdeas] = useState([]);
 
   const handleContentTypeChange = useCallback((type) => {
     setFormData((prev) => ({ ...prev, contentType: type }));
@@ -120,6 +156,7 @@ function Idea() {
           tone: formData.tone,
           targetAudience: formData.targetAudience,
         });
+        setSavedIdeas([]); // Reset bookmarks when new ideas are generated
       } catch (err) {
         setError(err.message || "Failed to generate ideas. Please try again.");
         setGeneratedContent(null);
@@ -129,6 +166,17 @@ function Idea() {
       }
     },
     [formData]
+  );
+
+  const handleToggleSave = useCallback(
+    (idx) => {
+      setSavedIdeas((prev) =>
+        prev.includes(idx)
+          ? prev.filter((i) => i !== idx)
+          : [...prev, idx]
+      );
+    },
+    []
   );
 
   const contentTypeButtons = useMemo(
@@ -318,7 +366,13 @@ function Idea() {
 
                     <div className="space-y-4">
                       {generatedContent.ideas.map((idea, index) => (
-                        <IdeaCard key={index} index={index} idea={idea} />
+                        <IdeaCard
+                          key={index}
+                          index={index}
+                          idea={idea}
+                          saved={savedIdeas.includes(index)}
+                          onToggleSave={handleToggleSave}
+                        />
                       ))}
                     </div>
                   </div>
