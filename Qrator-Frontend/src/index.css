@@ -20,3 +20,25 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0 1000px #425268f2 inset, 0 0 0 2px #60a5fa !important;
   box-shadow: 0 0 0 1000px #425268f2 inset, 0 0 0 2px #60a5fa !important;
 }
+
+/* Custom scrollbar for dark slate theme */
+::-webkit-scrollbar {
+  width: 10px;
+  background: #1e293b; /* slate-800 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155; /* slate-600 */
+  border-radius: 8px;
+  border: 2px solid #1e293b; /* slate-800 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* slate-500 */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #1e293b;
+}
