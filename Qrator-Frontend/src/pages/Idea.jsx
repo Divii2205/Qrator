@@ -169,14 +169,14 @@ function Idea() {
   );
 
   const handleToggleSave = useCallback(
-    (idx) => {
-      setSavedIdeas((prev) =>
-        prev.includes(idx)
-          ? prev.filter((i) => i !== idx)
-          : [...prev, idx]
-      );
+    (index) => {
+      setSavedIdeas((prev) => {
+        const newSavedIdeas = [...prev];
+        newSavedIdeas[index] = !newSavedIdeas[index];
+        return newSavedIdeas;
+      });
     },
-    []
+    [setSavedIdeas]
   );
 
   const contentTypeButtons = useMemo(
@@ -332,52 +332,51 @@ function Idea() {
                 Generated Ideas
               </h2>
 
-              <div
-                className="max-h-[85vh] min-h-[400px] overflow-y-auto pr-2"
-                style={{ scrollbarGutter: "stable" }}
-              >
-                {!generatedContent && !isLoading && (
-                  <div className="bg-slate-700/30 rounded-xl p-8 text-center">
-                    <p className="text-gray-400 text-lg">
-                      Fill out the form to generate content ideas
-                    </p>
+              {!generatedContent && !isLoading && (
+                <div className="bg-slate-700/30 rounded-xl p-8 text-center">
+                  <p className="text-gray-400 text-lg">
+                    Fill out the form to generate content ideas
+                  </p>
+                </div>
+              )}
+
+              {isLoading && (
+                <div className="bg-slate-700/30 rounded-xl p-8 text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                  <p className="text-gray-400 text-lg">
+                    Generating amazing ideas for you...
+                  </p>
+                </div>
+              )}
+
+              {generatedContent && !isLoading && (
+                <div className="space-y-6">
+                  <div className="flex gap-2 mb-6">
+                    <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
+                      {generatedContent.contentType}
+                    </span>
+                    <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
+                      {generatedContent.tone}
+                    </span>
                   </div>
-                )}
-
-                {isLoading && (
-                  <div className="bg-slate-700/30 rounded-xl p-8 text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                    <p className="text-gray-400 text-lg">
-                      Generating amazing ideas for you...
-                    </p>
-                  </div>
-                )}
-
-                {generatedContent && !isLoading && (
-                  <div className="space-y-6">
-                    <div className="flex gap-2 mb-6">
-                      <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
-                        {generatedContent.contentType}
-                      </span>
-                      <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
-                        {generatedContent.tone}
-                      </span>
-                    </div>
-
+                  <div
+                    className="max-h-[79vh] min-h-[400px] overflow-y-auto pr-2"
+                    style={{ scrollbarGutter: "stable" }}
+                  >
                     <div className="space-y-4">
                       {generatedContent.ideas.map((idea, index) => (
                         <IdeaCard
                           key={index}
                           index={index}
                           idea={idea}
-                          saved={savedIdeas.includes(index)}
+                          saved={savedIdeas[index]}
                           onToggleSave={handleToggleSave}
                         />
                       ))}
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

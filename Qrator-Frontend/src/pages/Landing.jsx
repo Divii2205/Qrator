@@ -1,12 +1,10 @@
 import {
-  ArrowRight,
   Lightbulb,
   FileText,
   Image,
   Calendar,
   Search,
   Vault,
-  Play,
   Users,
   Trophy,
   Zap,
@@ -14,14 +12,9 @@ import {
 import { useEffect, useState } from "react";
 import Background from "../components/Background";
 import Auth from "../components/Auth";
-import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
-  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
-  const [activeFeature, setActiveFeature] = useState(0);
-  const [user, setUser] = useState(null);
-
 
   useEffect(() => {
     setIsVisible(true);
@@ -36,7 +29,7 @@ export default function Landing() {
       icon: Lightbulb,
       title: "AI Idea Generator",
       description:
-        "Generate creative content ideas based on trends and your goals with advanced AI algorithms",
+        "Generate creative YouTube content ideas based on trends and your goals with advanced AI algorithms.",
       color: "from-blue-500 to-purple-600",
       path: "/idea",
     },
@@ -44,7 +37,7 @@ export default function Landing() {
       icon: FileText,
       title: "Script Generator",
       description:
-        "Convert ideas into professional scripts for videos and articles with intelligent formatting",
+        "Convert ideas into professional scripts for YouTube videos and shorts with intelligent formatting.",
       color: "from-purple-500 to-pink-600",
       path: "/script",
     },
@@ -52,7 +45,7 @@ export default function Landing() {
       icon: Image,
       title: "Thumbnail Creator",
       description:
-        "Auto-generate eye-catching thumbnails with AI-powered design suggestions",
+        "Auto-generate eye-catching YouTube thumbnails with AI-powered design suggestions.",
       color: "from-pink-500 to-red-600",
       path: "/thumbnail",
     },
@@ -60,7 +53,7 @@ export default function Landing() {
       icon: Calendar,
       title: "Content Calendar",
       description:
-        "Plan and schedule your content across multiple platforms with smart automation",
+        "Plan and schedule your YouTube content with smart automation.",
       color: "from-green-500 to-blue-600",
       path: "/calendar",
     },
@@ -68,7 +61,7 @@ export default function Landing() {
       icon: Search,
       title: "SEO Tools",
       description:
-        "Optimize your content for search engines with real-time analysis and suggestions",
+        "Optimize your YouTube content for search with real-time analysis and suggestions.",
       color: "from-yellow-500 to-orange-600",
       path: "/seo",
     },
@@ -76,7 +69,7 @@ export default function Landing() {
       icon: Vault,
       title: "Content Vault",
       description:
-        "Store, organize and manage all your generated content in one secure location",
+        "Store, organize and manage all your generated YouTube content in one secure location.",
       color: "from-indigo-500 to-purple-600",
       path: "/vault",
     },
@@ -86,24 +79,24 @@ export default function Landing() {
     {
       icon: Zap,
       title: "AI-Powered",
-      description: "Advanced algorithms for content creation",
+      description: "Advanced algorithms for YouTube content creation",
     },
     {
       icon: Users,
       title: "User-Friendly",
-      description: "Intuitive interface for all creators",
+      description: "Intuitive interface for YouTube creators",
     },
     {
       icon: Trophy,
       title: "Instant Results",
-      description: "Get content ideas in seconds",
+      description: "Get YouTube content ideas in seconds",
     },
   ];
 
   return (
-    <Background showFooter={false} showNavbar={false}>
+    <Background showNavbar={false}>
       <div className="min-h-screen text-white">
-        <div className="max-w-7xl mx-auto px-6 pt-16">
+        <div className="max-w-7xl mx-auto px-6 pt-32">
           <div
             className={`transition-all duration-1000 ease-out ${
               isVisible
@@ -114,7 +107,8 @@ export default function Landing() {
             <div className="text-center space-y-8 max-w-4xl mx-auto">
               <h1 className="text-white font-bold leading-tight">
                 <div className="text-7xl lg:text-8xl mb-4">
-                  Start your <span className="text-blue-400">Journey</span>
+                  Start your{" "}
+                  <span className="text-blue-400">Journey</span>
                 </div>
                 <div className="text-5xl lg:text-6xl text-blue-300">
                   Get, Set, Create
@@ -122,9 +116,13 @@ export default function Landing() {
               </h1>
 
               <p className="text-white/80 text-xl lg:text-2xl leading-relaxed">
-                Streamline your content creation workflow with powerful AI
-                tools. From ideation to publication, create amazing content
-                effortlessly.
+                The all-in-one platform for{" "}
+                <span className="text-blue-400 font-semibold">
+                  YouTube content creators
+                </span>
+                . Streamline your YouTube workflow with powerful AI tools. From
+                ideation to publication, create amazing videos and grow your
+                channel effortlessly.
               </p>
 
               <div className="flex justify-center gap-6 py-8">
@@ -157,7 +155,7 @@ export default function Landing() {
           <div className="mt-32 mb-20">
             <h2 className="text-4xl font-bold text-center mb-16">
               Powerful Tools for{" "}
-              <span className="text-blue-400">Content Creators</span>
+              <span className="text-blue-400">YouTube Content Creators</span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {features.map((feature, index) => (
